@@ -15,24 +15,18 @@
         let score =0;
         let wicket =0;
         let ballwiseRes = [];
+        let hit = 0;
+        let inputRef = React.createRef();
 
        
         function addScore(num){
-            if(wicket<10){
-                ballwiseRes.push(num);
-            score += num;
-            rootElement.render(<App />);
-            console.log(ballwiseRes);
-            }
+            hit = num;
+            rootElement.render(<App />);   
         }
         
         function addWicket(){
-            if(wicket<10){
-                ballwiseRes.push("W");
-                wicket +=  1;
-            rootElement.render(<App />);
-            console.log(ballwiseRes);
-            }  
+            hit = 'W';
+            rootElement.render(<App />);    
         }
 
         const Result = () =>(
@@ -44,6 +38,29 @@
                 </>
                 ))}    
             </div>
+        )
+        function handleEvent(event){
+            event.preventDefault();
+            if(hit == "W"){
+                wicket+=1;
+            }else{
+                score+=hit;
+            }
+            ballwiseRes.unshift(
+            // <span>{hit}{","}{inputRef.current.value} </span>
+            <span>{`${hit}, ${inputRef.current.value}`}</span>
+            );
+            hit = 0;
+            inputRef.current.value = "";
+            console.log(inputRef.current.value);
+            rootElement.render(<App />)
+        }
+        const Scorekeeper = () =>(
+            <form onSubmit = {handleEvent}>
+                <input value = {hit}/>
+                <input ref ={inputRef} placeholder="Add a Comments"/>
+                <button>Submit</button>
+            </form>
         )
 
         const ScoreCard = ()=>(
@@ -64,7 +81,13 @@
             <h1>Score Keeper</h1>
             <h2>Score: {score}/{wicket}</h2>
            <ScoreCard />
-           <Result />
+           <br />
+           
+           <Scorekeeper />
+           <hr />
+           {ballwiseRes.map((res,index)=> ( 
+            <p key = {index}>{res}</p>
+           ))}
             </>
         )
         const rootElement = ReactDOM.createRoot(document.getElementById("root"));
